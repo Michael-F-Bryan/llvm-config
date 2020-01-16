@@ -4,7 +4,7 @@
 
 ([API Docs])
 
-A thin Rust wrapper around the `llvm-config` tool, intended for use in build
+An interface to the `llvm-config` tool from Rust, intended for use in build
 scripts.
 
 ## License
