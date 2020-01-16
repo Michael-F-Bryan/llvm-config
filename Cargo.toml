@@ -4,4 +4,10 @@ version = "0.1.0"
 authors = ["Michael Bryan <michaelfbryan@gmail.com>"]
 license = "MIT OR Apache-2.0"
 edition = "2018"
+description = "A thin wrapper around the `llvm-config` tool so you can call it from Rust."
+keywords = ["llvm-config", "llvm", "discovery"]
+categories = ["api-bindings", "configuration", "development-tools"]
+repository = "https://github.com/Michael-F-Bryan/llvm-config"
 
+[badges]
+travis-ci = { repository = "Michael-F-Bryan/llvm-config", branch = "master" }
