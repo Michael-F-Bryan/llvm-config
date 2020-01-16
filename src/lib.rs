@@ -1,65 +1,87 @@
 //! A thin wrapper around the `llvm-config` tool so you can call it from Rust.
+//!
+//! This is mainly intended as a tool for build scripts which need to use LLVM
+//! but don't want to manually parse the output and handle errors every time.
 
 use std::{
     ffi::OsStr,
+    fmt::{self, Display, Formatter},
     io,
     path::PathBuf,
     process::{Command, Output, Stdio},
     string::FromUtf8Error,
 };
 
+/// Print LLVM version.
 pub fn version() -> Result<String, Error> {
     map_stdout(&["--verson"], ToString::to_string)
 }
 
+/// Print the installation prefix.
 pub fn prefix() -> Result<PathBuf, Error> {
     map_stdout(&["--prefix"], |s| PathBuf::from(s))
 }
 
+/// Print the source root LLVM was built from.
 pub fn src_root() -> Result<PathBuf, Error> {
     map_stdout(&["--src-root"], |s| PathBuf::from(s))
 }
-
+/// Print the object root used to build LLVM.
 pub fn obj_root() -> Result<PathBuf, Error> {
     map_stdout(&["--obj-root"], |s| PathBuf::from(s))
 }
 
+/// Directory containing LLVM executables.
 pub fn bin_dir() -> Result<PathBuf, Error> {
     map_stdout(&["--bin-dir"], |s| PathBuf::from(s))
 }
 
+/// Directory containing LLVM headers.
 pub fn include_dir() -> Result<PathBuf, Error> {
     map_stdout(&["--include-dir"], |s| PathBuf::from(s))
 }
 
+/// Directory containing LLVM libraries.
 pub fn lib_dir() -> Result<PathBuf, Error> {
     map_stdout(&["--lib-dir"], |s| PathBuf::from(s))
 }
 
+/// Directory containing LLVM cmake modules.
 pub fn cmake_dir() -> Result<PathBuf, Error> {
     map_stdout(&["--cmake-dir"], |s| PathBuf::from(s))
 }
 
+/// C preprocessor flags for files that include LLVM headers.
 pub fn cpp_flags() -> Result<impl Iterator<Item = String>, Error> {
     stdout_words(&["--cppflags"])
 }
 
+/// C compiler flags for files that include LLVM headers.
 pub fn c_flags() -> Result<impl Iterator<Item = String>, Error> {
     stdout_words(&["--cflags"])
 }
 
-pub fn ldflags() -> Result<impl Iterator<Item = String>, Error> {
-    stdout_words(&["--cflags"])
+/// C++ compiler flags for files that include LLVM headers.
+pub fn cxx_flags() -> Result<impl Iterator<Item = String>, Error> {
+    stdout_words(&["--cxxflags"])
 }
 
+/// Print Linker flags.
+pub fn ldflags() -> Result<impl Iterator<Item = String>, Error> {
+    stdout_words(&["--ldflags"])
+}
+
+/// System Libraries needed to link against LLVM components.
 pub fn system_libs() -> Result<impl Iterator<Item = String>, Error> {
     stdout_words(&["--system-libs"])
 }
 
+/// Libraries needed to link against LLVM components.
 pub fn libs() -> Result<impl Iterator<Item = String>, Error> {
     stdout_words(&["--libs"])
 }
 
+/// Bare library names for in-tree builds.
 pub fn libnames() -> Result<String, Error> {
     map_stdout(&["--libnames"], |s| String::from(s))
 }
@@ -69,6 +91,7 @@ pub fn libfiles() -> Result<impl Iterator<Item = String>, Error> {
     stdout_words(&["--libfiles"])
 }
 
+/// List of all possible components.
 pub fn components() -> Result<impl Iterator<Item = String>, Error> {
     stdout_words(&["--components"])
 }
@@ -109,19 +132,6 @@ impl Iterator for SpaceSeparatedStrings {
         self.next_character_index += word.len();
         Some(dbg!(word).to_string())
     }
-}
-
-#[derive(Debug)]
-pub enum Error {
-    Utf8(FromUtf8Error),
-    UnableToInvoke(io::Error),
-    /// The command ran to completion, but finished with an unsuccessful status
-    /// code (as reported by [`std::process::ExitStatus`]).
-    BadExitCode(Output),
-}
-
-impl From<FromUtf8Error> for Error {
-    fn from(other: FromUtf8Error) -> Error { Error::Utf8(other) }
 }
 
 fn run<I, O>(args: I) -> Result<Output, Error>
@@ -166,6 +176,48 @@ where
     let output = run(args)?;
     let stdout = String::from_utf8(output.stdout)?;
     Ok(SpaceSeparatedStrings::new(stdout))
+}
+
+/// An error that may occur while trying to use `llvm-config`.
+#[derive(Debug)]
+pub enum Error {
+    Utf8(FromUtf8Error),
+    UnableToInvoke(io::Error),
+    /// The command ran to completion, but finished with an unsuccessful status
+    /// code (as reported by [`std::process::ExitStatus`]).
+    BadExitCode(Output),
+}
+
+impl From<FromUtf8Error> for Error {
+    fn from(other: FromUtf8Error) -> Error { Error::Utf8(other) }
+}
+
+impl Display for Error {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            Error::Utf8(_) => write!(f, "The output wasn't valid UTF-8"),
+            Error::UnableToInvoke(_) => write!(f, "Unable to invoke llvm-config. Is it installed and on your $PATH?"),
+            Error::BadExitCode(output) => {
+                write!(f, "llvm-config ran unsuccessfully")?;
+
+                if let Some(code) = output.status.code() {
+                    write!(f, " with exit code {}", code)?;
+                }
+
+                Ok(())
+            }
+        }
+    }
+}
+
+impl std::error::Error for Error {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Error::Utf8(inner) => Some(inner),
+            Error::UnableToInvoke(inner) => Some(inner),
+            Error::BadExitCode(_) => None,
+        }
+    }
 }
 
 #[cfg(test)]
