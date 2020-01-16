@@ -1,8 +1,11 @@
 # llvm-config
 
 [![Build Status](https://travis-ci.com/Michael-F-Bryan/llvm-config.svg?branch=master)](https://travis-ci.com/Michael-F-Bryan/llvm-config)
+[![Docs.rs Badge](https://docs.rs/llvm-config/badge.svg)](https://docs.rs/llvm-config)
+[![Crates.io](https://img.shields.io/crates/v/llvm-config)](https://crates.io/crates/llvm-config)
+![Crates.io](https://img.shields.io/crates/l/llvm-config)
 
-([API Docs])
+([API Docs for master][docs])
 
 An interface to the `llvm-config` tool from Rust, intended for use in build
 scripts.
@@ -25,4 +28,4 @@ submitted for inclusion in the work by you, as defined in the Apache-2.0
 license, shall be dual licensed as above, without any additional terms or
 conditions.
 
-[API Docs]: https://michael-f-bryan.github.io/llvm-config
+[docs]: https://michael-f-bryan.github.io/llvm-config
