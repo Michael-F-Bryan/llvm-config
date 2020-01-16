@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/Michael-F-Bryan/llvm-config.svg?branch=master)](https://travis-ci.com/Michael-F-Bryan/llvm-config)
 [![Docs.rs Badge](https://docs.rs/llvm-config/badge.svg)](https://docs.rs/llvm-config)
 [![Crates.io](https://img.shields.io/crates/v/llvm-config)](https://crates.io/crates/llvm-config)
-![Crates.io](https://img.shields.io/crates/l/llvm-config)
+[![Crates.io](https://img.shields.io/crates/l/llvm-config)](#license)
 
 ([API Docs for master][docs])
 
