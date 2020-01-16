@@ -3,6 +3,9 @@
 //! This is mainly intended as a tool for build scripts which need to use LLVM
 //! but don't want to manually parse the output and handle errors every time.
 
+#![forbid(unsafe_code)]
+#![deny(missing_docs, missing_debug_implementations)]
+
 use std::{
     ffi::OsStr,
     fmt::{self, Display, Formatter},
@@ -96,6 +99,7 @@ pub fn components() -> Result<impl Iterator<Item = String>, Error> {
     stdout_words(&["--components"])
 }
 
+#[derive(Debug)]
 struct SpaceSeparatedStrings {
     src: String,
     next_character_index: usize,
@@ -181,7 +185,9 @@ where
 /// An error that may occur while trying to use `llvm-config`.
 #[derive(Debug)]
 pub enum Error {
+    /// The output wasn't valid UTF-8.
     Utf8(FromUtf8Error),
+    /// Unable to invoke `llvm-config`.
     UnableToInvoke(io::Error),
     /// The command ran to completion, but finished with an unsuccessful status
     /// code (as reported by [`std::process::ExitStatus`]).
