@@ -119,22 +119,22 @@ impl Iterator for SpaceSeparatedStrings {
 
     fn next(&mut self) -> Option<Self::Item> {
         let rest = &self.src[self.next_character_index..];
-        let trimmed = dbg!(rest.trim_start());
+        let trimmed = rest.trim_start();
         // Note: We need to keep track of how much whitespace was skipped...
-        self.next_character_index += dbg!(rest.len() - trimmed.len());
+        self.next_character_index += rest.len() - trimmed.len();
         let rest = trimmed;
 
         if rest.is_empty() {
             return None;
         }
 
-        let word = match dbg!(rest.find(char::is_whitespace)) {
+        let word = match rest.find(char::is_whitespace) {
             Some(end_ix) => &rest[..end_ix],
             None => rest,
         };
 
         self.next_character_index += word.len();
-        Some(dbg!(word).to_string())
+        Some(word.to_string())
     }
 }
 
