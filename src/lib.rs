@@ -36,22 +36,22 @@ pub fn obj_root() -> Result<PathBuf, Error> {
 
 /// Directory containing LLVM executables.
 pub fn bin_dir() -> Result<PathBuf, Error> {
-    map_stdout(&["--bin-dir"], |s| PathBuf::from(s))
+    map_stdout(&["--bindir"], |s| PathBuf::from(s))
 }
 
 /// Directory containing LLVM headers.
 pub fn include_dir() -> Result<PathBuf, Error> {
-    map_stdout(&["--include-dir"], |s| PathBuf::from(s))
+    map_stdout(&["--includedir"], |s| PathBuf::from(s))
 }
 
 /// Directory containing LLVM libraries.
 pub fn lib_dir() -> Result<PathBuf, Error> {
-    map_stdout(&["--lib-dir"], |s| PathBuf::from(s))
+    map_stdout(&["--libdir"], |s| PathBuf::from(s))
 }
 
 /// Directory containing LLVM cmake modules.
 pub fn cmake_dir() -> Result<PathBuf, Error> {
-    map_stdout(&["--cmake-dir"], |s| PathBuf::from(s))
+    map_stdout(&["--cmakedir"], |s| PathBuf::from(s))
 }
 
 /// C preprocessor flags for files that include LLVM headers.
