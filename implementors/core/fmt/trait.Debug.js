@@ -1,9 +1,3 @@
 (function() {var implementors = {};
-implementors["llvm_config"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html\" title=\"trait core::fmt::Debug\">Debug</a> for <a class=\"enum\" href=\"llvm_config/enum.Error.html\" title=\"enum llvm_config::Error\">Error</a>","synthetic":false,"types":["llvm_config::Error"]}];
-
-            if (window.register_implementors) {
-                window.register_implementors(implementors);
-            } else {
-                window.pending_implementors = implementors;
-            }
-        })()
+implementors["llvm_config"] = [{"text":"impl Debug for Error","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
